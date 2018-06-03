@@ -17,6 +17,8 @@ Instead i opted for [Armbian](https://www.armbian.com/) - they provide three ima
 * Armbian Jessie (Kernel 4.9)
 * Armbian Stretch (Kernel 4.9)
 * Armbian Bionic (Kernel 4.9)
+
+## Armbian
 I'm using the Armbian Stretch image right now.
 
 ### Basic Setup
@@ -49,12 +51,55 @@ It's possible to build the binary from scratch, but there's an easier way - simp
 * `tar -xzf crictl-v1.0.0-beta.1-linux-arm.tar.gz`, `chown root:root crictl`and `cp crictl /usr/local/bin`
 * Copy the binary to all nodes: `scp crictl odroidmc1-node1:/tmp odroidmc1-node2:/tmp odroidmc1-node3:/tmp`
 
+#### kubeadm, kubelet and kubectl
 Finally back to the installation guide (_Installing kubeadm, kubelet and kubectl_).
 
 There's still one catch - the cgroup driver used by kubelet is not the same as the one used by Docker. As a matter of fact, there is no configuration entry at all present in the configuration file.
 I followed [this](https://stackoverflow.com/questions/45708175/kubelet-failed-with-kubelet-cgroup-driver-cgroupfs-is-different-from-docker-c) thread on stackoverflow and added another line to _/etc/systemd/system/kubelet.service.d/10-kubeadm.conf_:
 `Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"`
 
+## Kubernetes Setup
+Running `kubeadm init` on the master node is disappointing:
+```
+root@odroidmc1-master:~# kubeadm init
+[init] Using Kubernetes version: v1.10.3
+[init] Using Authorization modes: [Node RBAC]
+[preflight] Running pre-flight checks.
+        [WARNING SystemVerification]: docker version is greater than the most recently validated version. Docker version: 17.06.2-ce. Max validated version: 17.03
+[preflight] Some fatal errors occurred:
+        [ERROR KubeletVersion]: couldn't get kubelet version: exit status 2
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+```
 
+Did a simple test, ran `kubelet --help` and ...
+```
+root@odroidmc1-master:~# kubelet --help
+unexpected fault address 0x15d71470
+fatal error: fault
+[signal SIGSEGV: segmentation violation code=0x2 addr=0x15d71470 pc=0x15d71470]
 
+goroutine 1 [running, locked to thread]:
+runtime.throw(0x2a84a9e, 0x5)
+	/usr/local/go/src/runtime/panic.go:605 +0x70 fp=0x16533e98 sp=0x16533e8c pc=0x3efa4
+runtime.sigpanic()
+	/usr/local/go/src/runtime/signal_unix.go:374 +0x1cc fp=0x16533ebc sp=0x16533e98 pc=0x5517c
+k8s.io/kubernetes/vendor/github.com/appc/spec/schema/types.SemVer.Empty(...)
+	/workspace/anago-v1.10.3-beta.0.74+2bba0127d85d5a/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.com/appc/spec/schema/types/semver.go:68
+k8s.io/kubernetes/vendor/github.com/appc/spec/schema/types.NewSemVer(0x1618a560, 0x20945b4, 0x2a8fbcf, 0xb, 0x15f91170)
+	/workspace/anago-v1.10.3-beta.0.74+2bba0127d85d5a/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.com/appc/spec/schema/types/semver.go:41 +0x90 fp=0x16533f58 sp=0x16533ec0 pc=0x206c8d8
 
+goroutine 5 [chan receive]:
+k8s.io/kubernetes/vendor/github.com/golang/glog.(*loggingT).flushDaemon(0x4551f48)
+	/workspace/anago-v1.10.3-beta.0.74+2bba0127d85d5a/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.com/golang/glog/glog.go:879 +0x70
+created by k8s.io/kubernetes/vendor/github.com/golang/glog.init.0
+	/workspace/anago-v1.10.3-beta.0.74+2bba0127d85d5a/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.com/golang/glog/glog.go:410 +0x1a0
+
+goroutine 25 [syscall]:
+os/signal.signal_recv(0x2bd146c)
+	/usr/local/go/src/runtime/sigqueue.go:131 +0x134
+os/signal.loop()
+	/usr/local/go/src/os/signal/signal_unix.go:22 +0x14
+created by os/signal.init.0
+	/usr/local/go/src/os/signal/signal_unix.go:28 +0x30
+```
+Well, that is **really** disappointing!
