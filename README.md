@@ -27,7 +27,8 @@ You'll want to use static IP addresses ...
 
 Run `apt-get update && apt-get upgrade` to fetch all the updates.
 
-As a side note: Even though it takes some time getting used to [tmux](https://github.com/tmux/tmux/wiki) makes dealing with 4 shells at the same time really easy!
+As a side note: Even though it takes some time getting used to [tmux](https://github.com/tmux/tmux/wiki) makes dealing with 4 shells at the same time really easy:
+![Cluster shells](https://github.com/selste/odroid-cluster/blob/master/images/odroid-tmux.png)
 
 ### Kubernetes
 I'm basically following the official documentation: [Installing kubeadm](https://kubernetes.io/docs/tasks/tools/install-kubeadm/)
