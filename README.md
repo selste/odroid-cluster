@@ -21,9 +21,10 @@ I'm using the Armbian Stretch image right now.
 
 ### Basic Setup
 You'll want to use static IP addresses ...
-* Run [armbian-config](https://docs.armbian.com/User-Guide_Armbian-Config/) (or edit manually)
-* Change the hostname
+* Run [armbian-config](https://docs.armbian.com/User-Guide_Armbian-Config/) (or edit the file manually)
+* Change the hostname(s)
 * Add all the cluster nodes to /etc/hosts
 
 Run `apt-get update && apt-get upgrade` to fetch all the updates.
+
 
