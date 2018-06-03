@@ -27,4 +27,16 @@ You'll want to use static IP addresses ...
 
 Run `apt-get update && apt-get upgrade` to fetch all the updates.
 
+As a side note: Even though it takes some time getting used to [tmux](https://github.com/tmux/tmux/wiki) makes dealing with 4 shells at the same time really easy!
+
+### Kubernetes
+I'm basically following the official documentation: [Installing kubeadm](https://kubernetes.io/docs/tasks/tools/install-kubeadm/)
+
+#### Docker
+Officially supported with the current version of Kubernetes (1.10) is Docker CE 17.03, 17.06+ _might work_ but hasn't been tested yet.
+The canonical Docker repository already contains 18.03, which probably won't work - so we're going to deviate from the official guide, download the oldest available DEB package from the repository and install it manually (might be a good idea to pin it as well):
+* `curl -LO https://download.docker.com/linux/debian/dists/stretch/pool/stable/armhf/docker-ce_17.06.2~ce-0~debian_armhf.deb`
+* Install a necessary dependency first: `apt-get install libltdl7`
+* `dpkg -i docker-ce_17.06.2~ce-0~debian_armhf.deb`
+* Copy the package to the nodes: `scp docker-ce_17.06.2~ce-0~debian_armhf.deb odroidmc1-node1:/tmp odroidmc1-node2:/tmp odroidmc1-node3:/tmp` and repeat the installation on each one
 
