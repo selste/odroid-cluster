@@ -1,0 +1,5 @@
+UUID=c57cabb5-6ae9-4fdc-9056-3d4b17426d73 / ext4 defaults,noatime,nodiratime,commit=600,errors=remount-ro 0 1
+tmpfs /tmp tmpfs defaults,nosuid 0 0
+# Kubernetes doesn't like this
+# /var/swap none swap sw 0 0
+

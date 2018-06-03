@@ -24,6 +24,7 @@ You'll want to use static IP addresses ...
 * Run [armbian-config](https://docs.armbian.com/User-Guide_Armbian-Config/) (or edit the file manually)
 * Change the hostname(s)
 * Add all the cluster nodes to /etc/hosts
+* Turn swap off: `swapoff -a`, then disable the entry in /etc/fstab
 
 Run `apt-get update && apt-get upgrade` to fetch all the updates.
 
@@ -34,10 +35,26 @@ As a side note: Even though it takes some time getting used to [tmux](https://gi
 I'm basically following the official documentation: [Installing kubeadm](https://kubernetes.io/docs/tasks/tools/install-kubeadm/)
 
 #### Docker
-Officially supported with the current version of Kubernetes (1.10) is Docker CE 17.03, 17.06+ _might work_ but hasn't been tested yet.
+Officially supported with the current version of Kubernetes (1.10.3) is Docker CE 17.03, 17.06+ _might work_ but hasn't been tested yet.
 The canonical Docker repository already contains 18.03, which probably won't work - so we're going to deviate from the official guide, download the oldest available DEB package from the repository and install it manually (might be a good idea to pin it as well):
 * `curl -LO https://download.docker.com/linux/debian/dists/stretch/pool/stable/armhf/docker-ce_17.06.2~ce-0~debian_armhf.deb`
 * Install a necessary dependency first: `apt-get install libltdl7`
 * `dpkg -i docker-ce_17.06.2~ce-0~debian_armhf.deb`
 * Copy the package to the nodes: `scp docker-ce_17.06.2~ce-0~debian_armhf.deb odroidmc1-node1:/tmp odroidmc1-node2:/tmp odroidmc1-node3:/tmp` and repeat the installation on each one
+
+#### cri-tools
+Kubernetes 1.10.3 requires the [CLI and validation tools for Kubelet Container Runtime Interface (CRI)](https://github.com/kubernetes-incubator/cri-tools).
+It's possible to build the binary from scratch, but there's an easier way - simply download the [appropriate archive](https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.0.0-beta.1/crictl-v1.0.0-beta.1-linux-arm.tar.gz):
+* `curl -LO https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.0.0-beta.1/crictl-v1.0.0-beta.1-linux-arm.tar.gz`
+* `tar -xzf crictl-v1.0.0-beta.1-linux-arm.tar.gz`, `chown root:root crictl`and `cp crictl /usr/local/bin`
+* Copy the binary to all nodes: `scp crictl odroidmc1-node1:/tmp odroidmc1-node2:/tmp odroidmc1-node3:/tmp`
+
+Finally back to the installation guide (_Installing kubeadm, kubelet and kubectl_).
+
+There's still one catch - the cgroup driver used by kubelet is not the same as the one used by Docker. As a matter of fact, there is no configuration entry at all present in the configuration file.
+I followed [this](https://stackoverflow.com/questions/45708175/kubelet-failed-with-kubelet-cgroup-driver-cgroupfs-is-different-from-docker-c) thread on stackoverflow and added another line to _/etc/systemd/system/kubelet.service.d/10-kubeadm.conf_:
+`Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"`
+
+
+
 
