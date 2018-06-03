@@ -12,8 +12,8 @@ But the [Odroid MC1](http://www.hardkernel.com/main/products/prdt_info.php?g_cod
 * Aluminium case to assemble the units acts as a (very substantial) heatsink - You can probably get away with only passive cooling
 
 ## Software
-Hardkernel provide images based on Ubuntu running Kernel 4.14 ... which is pretty nice, unfortunately there's no headless image based on Ubuntu 18.04 at the time of this writing (June 2018).
-Instead i opted for [Armbian](https://www.armbian.com/) - they provide three images:
+Hardkernel provide images based on Ubuntu running Kernel 4.14 ... which is pretty nice.
+Still, i opted for [Armbian](https://www.armbian.com/) - they provide three images:
 * Armbian Jessie (Kernel 4.9)
 * Armbian Stretch (Kernel 4.9)
 * Armbian Bionic (Kernel 4.9)
@@ -103,3 +103,7 @@ created by os/signal.init.0
 	/usr/local/go/src/os/signal/signal_unix.go:28 +0x30
 ```
 Well, that is **really** disappointing!
+
+## Ubuntu
+Starting all over again, this time using the minimal Ubuntu image.
+Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 18.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20180531) - there is a minimal image available as well as a full image (using the Mate desktop).
