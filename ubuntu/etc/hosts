@@ -1,0 +1,11 @@
+127.0.0.1	odroidmc1-master
+127.0.0.1	localhost
+::1		localhost ip6-localhost ip6-loopback
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters
+
+192.168.178.111	odroidmc1-node1
+192.168.178.112 odroidmc1-node2
+192.168.178.113	odroidmc1-node3
+
+

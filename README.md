@@ -106,4 +106,76 @@ Well, that is **really** disappointing!
 
 ## Ubuntu
 Starting all over again, this time using the minimal Ubuntu image.
-Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 18.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20180531) - there is a minimal image available as well as a full image (using the Mate desktop).
+Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 16.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20171213) - there is a minimal image available as well as a full image (using the Mate desktop).
+
+Because there is currently no official Kubernetes release available for the current Ubuntu LTS version (Bionic Beaver) i'm sticking with the older one.
+
+### Basic Setup
+Follow the instructions provided by Hardkernel to update the system and the kernel.
+
+You'll want to use static IP addresses ...
+* Edit /etc/network/interfaces
+* Edit /etc/hostname
+* Edit /etc/hosts and add all the cluster nodes
+
+### Kubernetes
+
+#### Docker
+Using the official Docker repository this time, i'm simply following [Get Docker CE for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/) to install _17.03.2~ce-0~ubuntu-xenial_.
+
+Successfully verified that Docker is installed correctly:
+
+```
+root@odroidmc1-master:~# docker run hello-world
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (arm32v5)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/engine/userguide/
+```
+
+#### kubeadm, kubelet and kubectl
+Switching to the Kubernetes installation guide.
+
+Again, following [this](https://stackoverflow.com/questions/45708175/kubelet-failed-with-kubelet-cgroup-driver-cgroupfs-is-different-from-docker-c) thread on stackoverflow to add another line to _/etc/systemd/system/kubelet.service.d/10-kubeadm.conf_:
+`Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"`
+
+Restarting _kubelet_ afterwards
+```
+systemctl daemon-reload
+systemctl restart kubelet
+```
+does not lead to any error messages (at least on the console).
+
+## Kubernetes Setup
+Trying _kubeadm init_ on the master node ... the output is not encouraging:
+```
+root@odroidmc1-master:~# kubeadm init
+[init] Using Kubernetes version: v1.10.3
+[init] Using Authorization modes: [Node RBAC]
+[preflight] Running pre-flight checks.
+	[WARNING FileExisting-crictl]: crictl not found in system path
+Suggestion: go get github.com/kubernetes-incubator/cri-tools/cmd/crictl
+[preflight] Some fatal errors occurred:
+	[ERROR KubeletVersion]: couldn't get kubelet version: exit status 2
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+```
+
+Basically the same error again!
+
