@@ -11,7 +11,7 @@ But the [Odroid-MC1](http://www.hardkernel.com/main/products/prdt_info.php?g_cod
 * Formfactor is much smaller, the size of the 4 Boards assembled, including the fan, is only 112 x 93 x 72mm
 * Aluminium case to assemble the units acts as a (very substantial) heatsink - You can probably get away with only passive cooling
 
-[Odroid-MC1](https://github.com/selste/odroid-cluster/blob/master/images/odroid-mc1.png)
+![Odroid-MC1](https://github.com/selste/odroid-cluster/blob/master/images/odroid-mc1.png)
 
 ## Software
 Hardkernel provide images based on Ubuntu running Kernel 4.14 ... which is pretty nice.
