@@ -179,3 +179,6 @@ Suggestion: go get github.com/kubernetes-incubator/cri-tools/cmd/crictl
 
 Basically the same error again!
 
+Hmmm ... the issue [kubelet - 1.10.3-00 - segmentation violation](https://github.com/kubernetes/kubernetes/issues/64234) seems to describe the problem.
+All right, i'll downgrade to 1.10.2 - probably not only kubelet but the whole shebang.
+
