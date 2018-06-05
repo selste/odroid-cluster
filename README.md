@@ -250,6 +250,7 @@ as root:
 ```
 
 Yay!!!
+
 With hindsight ... Armbian would have worked as well after downgrading kubelet, i suppose.
 
 Probably needs pinning as well, to prevent nasty surprises.
@@ -259,4 +260,5 @@ To get rid of the warning regarding _cri-tools_:
 * get the archive (`curl -LO https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.0.0-beta.1/crictl-v1.0.0-beta.1-linux-arm.tar.gz`)
 * extract (`tar -xzf crictl-v1.0.0-beta.1-linux-arm.tar.gz`)
 * change ownership (`chown root:root crictl`) and move (`mv crictl /usr/local/bin`)
+
 the binary.
