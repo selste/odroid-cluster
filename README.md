@@ -106,7 +106,7 @@ Well, that is **really** disappointing!
 
 ## Ubuntu
 Starting all over again, this time using the minimal Ubuntu image.
-Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 16.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20171213) - there is a minimal image available as well as a full image (using the Mate desktop).
+Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 16.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20171213) - this is a minimal image.
 
 Because there is currently no official Kubernetes release available for the current Ubuntu LTS version (Bionic Beaver) i'm sticking with the older one.
 
