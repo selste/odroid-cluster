@@ -107,10 +107,10 @@ created by os/signal.init.0
 Well, that is **really** disappointing!
 
 ## Ubuntu
-Starting all over again, this time using the minimal Ubuntu image.
-Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 16.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20171213) - this is a minimal image.
+Starting all over again, this time using the Hardkernel Ubuntu image.
+Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 16.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20171213) - there is only a minimal image.
 
-Because there is currently no official Kubernetes release available for the current Ubuntu LTS version (Bionic Beaver) i'm sticking with the older one.
+Because there is as of now no official Kubernetes release available for the current Ubuntu LTS version (Bionic Beaver) i'm sticking with the older one.
 
 ### Basic Setup
 Follow the instructions provided by Hardkernel to update the system and the kernel.
@@ -151,6 +151,8 @@ Share images, automate workflows, and more with a free Docker ID:
 For more examples and ideas, visit:
  https://docs.docker.com/engine/userguide/
 ```
+
+Might be a good idea to pin this package.
 
 #### kubeadm, kubelet and kubectl
 Switching to the Kubernetes installation guide.
@@ -249,3 +251,5 @@ as root:
 
 Yay!!!
 With hindsight ... Armbian would have worked as well after downgrading kubelet, i suppose.
+
+Probably needs pinning as well, to prevent nasty surprises.
