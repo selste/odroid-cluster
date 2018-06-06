@@ -186,14 +186,12 @@ Basically the same error again!
 Hmmm ... the issue [kubelet - 1.10.3-00 - segmentation violation](https://github.com/kubernetes/kubernetes/issues/64234) seems to describe the problem.
 All right, i'll downgrade to 1.10.2, by doing `apt install kubelet=1.10.2-00`.
 
-And _kubeadm init_ again ... looking **way** better now:
+Initialize Kubernetes, this time using `kubeadm init --pod-network-cidr=10.244.0.0/16` (because we'll be using _Flannel_ as pod network):
 ```
-root@odroidmc1-master:~# kubeadm init
-[init] Using Kubernetes version: v1.10.3
+root@odroidmc1-master:~# kubeadm init --pod-network-cidr=10.244.0.0/16
+[init] Using Kubernetes version: v1.10.4
 [init] Using Authorization modes: [Node RBAC]
 [preflight] Running pre-flight checks.
-	[WARNING FileExisting-crictl]: crictl not found in system path
-Suggestion: go get github.com/kubernetes-incubator/cri-tools/cmd/crictl
 [certificates] Generated ca certificate and key.
 [certificates] Generated apiserver certificate and key.
 [certificates] apiserver serving cert is signed for DNS names [odroidmc1-master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 192.168.178.110]
@@ -219,11 +217,11 @@ Suggestion: go get github.com/kubernetes-incubator/cri-tools/cmd/crictl
 [etcd] Wrote Static Pod manifest for a local etcd instance to "/etc/kubernetes/manifests/etcd.yaml"
 [init] Waiting for the kubelet to boot up the control plane as Static Pods from directory "/etc/kubernetes/manifests".
 [init] This might take a minute or longer if the control plane images have to be pulled.
-[apiclient] All control plane components are healthy after 160.007363 seconds
+[apiclient] All control plane components are healthy after 111.007031 seconds
 [uploadconfig] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
 [markmaster] Will mark node odroidmc1-master as master by adding a label and a taint
 [markmaster] Master odroidmc1-master tainted and labelled with key/value: node-role.kubernetes.io/master=""
-[bootstraptoken] Using token: lz2lai.9zflc4vwbtlol1bq
+[bootstraptoken] Using token: b4jj31.i9y3tdewbrd6l606
 [bootstraptoken] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
 [bootstraptoken] Configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
 [bootstraptoken] Configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
@@ -246,7 +244,7 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.178.110:6443 --token [supersecret token] --discovery-token-ca-cert-hash sha256:[supersecret hash]
+  kubeadm join 192.168.178.110:6443 --token [secret token] --discovery-token-ca-cert-hash sha256:[secret hash]
 ```
 
 Yay!!!
@@ -276,4 +274,74 @@ Pin-Priority: 1000
 ```
 
 ### Node(s)
+ToDo - short description of the installation steps for each node
+
+### Installing pod network
+As stated in the documentation
+* download the manifest manually: `curl -LO https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml`
+* replace the occurences of _amd64_ with _arm_
+
+Running _kubectl apply -f kube-flannel.yml_:
+```
+root@odroidmc1-master:~# kubectl apply -f /etc/kubernetes/kube-flannel.yml 
+clusterrole.rbac.authorization.k8s.io "flannel" created
+clusterrolebinding.rbac.authorization.k8s.io "flannel" created
+serviceaccount "flannel" created
+configmap "kube-flannel-cfg" created
+daemonset.extensions "kube-flannel-ds" created
+```
+looks pretty good.
+
+Check that is is indeed working:
+```
+root@odroidmc1-master:~# kubectl get pods --all-namespaces
+NAMESPACE     NAME                                       READY     STATUS     RESTARTS   AGE
+kube-system   etcd-odroidmc1-master                      0/1       Pending    0          3s
+kube-system   kube-apiserver-odroidmc1-master            0/1       Pending    0          3s
+kube-system   kube-controller-manager-odroidmc1-master   0/1       Pending    0          3s
+kube-system   kube-dns-686d6fb9c-76258                   0/3       Pending    0          9m
+kube-system   kube-flannel-ds-9ccnj                      0/1       Init:0/1   0          21s
+kube-system   kube-proxy-wzrnc                           1/1       NodeLost   0          9m
+kube-system   kube-scheduler-odroidmc1-master            0/1       Pending    0          3s
+```
+
+### Adding node(s)
+According to the manual it should now be possible to join a node to the master ... except it doesn't:
+```
+root@odroidmc1-node1:~# kubeadm join 192.168.178.110:6443 --token [secret token] --discovery-token-ca-cert-hash sha256:[secret hash]
+[preflight] Running pre-flight checks.
+[preflight] Some fatal errors occurred:
+	[ERROR CRI]: unable to check if the container runtime at "/var/run/dockershim.sock" is running: exit status 1
+[preflight] If you know what you are doing, you can make a check non-fatal with \`--ignore-preflight-errors=...\`
+```
+
+Oh well, issue [Installing crictl requires use of --ignore-preflight-errors=cri](https://github.com/kubernetes/kubeadm/issues/657) maybe?!
+
+Let's try and see:
+```
+root@odroidmc1-node1:~# kubeadm join 192.168.178.110:6443 --token [secret token] --discovery-token-ca-cert-hash sha256:[secret hash] --ignore-preflight-errors=cri
+[preflight] Running pre-flight checks.
+	[WARNING CRI]: unable to check if the container runtime at "/var/run/dockershim.sock" is running: exit status 1
+[discovery] Trying to connect to API Server "192.168.178.110:6443"
+[discovery] Created cluster-info discovery client, requesting info from "https://192.168.178.110:6443"
+[discovery] Requesting info from "https://192.168.178.110:6443" again to validate TLS against the pinned public key
+[discovery] Cluster info signature and contents are valid and TLS certificate validates against pinned roots, will use API Server "192.168.178.110:6443"
+[discovery] Successfully established connection with API Server "192.168.178.110:6443"
+
+This node has joined the cluster:
+* Certificate signing request was sent to master and a response
+  was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the master to see this node join the cluster.
+```
+
+Master seems happy:
+```
+root@odroidmc1-master:~# kubectl get nodes
+NAME               STATUS    ROLES     AGE       VERSION
+odroidmc1-master   Ready     master    26m       v1.10.2
+odroidmc1-node1    Ready     <none>    1m        v1.10.2
+root@odroidmc1-master:~# 
+```
 
