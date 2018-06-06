@@ -4,12 +4,14 @@ Setting up Kubernetes on a Odroid MC1 cluster
 ## Hardware
 Yes, there's the Raspberry Pi ... it's very popular, there's a pretty good distribution - [Hypriot](https://blog.hypriot.com/) - that sets You up (with Docker Swarm at least) in no time at all.
 
-But the [Odroid MC1](http://www.hardkernel.com/main/products/prdt_info.php?g_code=G150152508314) is ever so cute, comes preassembled and the hardware is significantly better than that of the Raspberry Pi 3(+):
+But the [Odroid-MC1](http://www.hardkernel.com/main/products/prdt_info.php?g_code=G150152508314) is ever so cute, comes preassembled and the hardware is significantly better than that of the Raspberry Pi 3(+):
 * Octocore CPU, 4 Cores run at 2 GHz
 * 2 GByte RAM
 * GBit Ethernet (no, the Raspberry can't do /real/ GBit Ethernet ... look it up)
 * Formfactor is much smaller, the size of the 4 Boards assembled, including the fan, is only 112 x 93 x 72mm
 * Aluminium case to assemble the units acts as a (very substantial) heatsink - You can probably get away with only passive cooling
+
+![Odroid-MC1](https://github.com/selste/odroid-cluster/blob/master/images/odroid-mc1.png)
 
 ## Software
 Hardkernel provide images based on Ubuntu running Kernel 4.14 ... which is pretty nice.
@@ -105,10 +107,10 @@ created by os/signal.init.0
 Well, that is **really** disappointing!
 
 ## Ubuntu
-Starting all over again, this time using the minimal Ubuntu image.
-Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 16.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20171213) - this is a minimal image.
+Starting all over again, this time using the Hardkernel Ubuntu image.
+Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 16.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20171213) - there is only a minimal image.
 
-Because there is currently no official Kubernetes release available for the current Ubuntu LTS version (Bionic Beaver) i'm sticking with the older one.
+Because there is as of now no official Kubernetes release available for the current Ubuntu LTS version (Bionic Beaver) i'm sticking with the older one.
 
 ### Basic Setup
 Follow the instructions provided by Hardkernel to update the system and the kernel.
@@ -149,6 +151,8 @@ Share images, automate workflows, and more with a free Docker ID:
 For more examples and ideas, visit:
  https://docs.docker.com/engine/userguide/
 ```
+
+Might be a good idea to pin this package.
 
 #### kubeadm, kubelet and kubectl
 Switching to the Kubernetes installation guide.
@@ -247,3 +251,14 @@ as root:
 
 Yay!!!
 
+With hindsight ... Armbian would have worked as well after downgrading kubelet, i suppose.
+
+Probably needs pinning as well, to prevent nasty surprises.
+
+### cri-tools
+To get rid of the warning regarding _cri-tools_:
+* get the archive (`curl -LO https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.0.0-beta.1/crictl-v1.0.0-beta.1-linux-arm.tar.gz`)
+* extract (`tar -xzf crictl-v1.0.0-beta.1-linux-arm.tar.gz`)
+* change ownership (`chown root:root crictl`) and move (`mv crictl /usr/local/bin`)
+
+the binary.
