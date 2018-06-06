@@ -121,7 +121,7 @@ You'll want to use static IP addresses ...
 ### Kubernetes
 
 #### Docker
-Using the official Docker repository this time, i'm simply following [Get Docker CE for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/) to install _17.03.2~ce-0~ubuntu-xenial_.
+Using the official Docker repository this time, i'm simply following [Get Docker CE for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/) to install _17.03.2\~ce-0\~ubuntu-xenial_.
 
 Successfully verified that Docker is installed correctly:
 
@@ -246,3 +246,4 @@ as root:
 ```
 
 Yay!!!
+
