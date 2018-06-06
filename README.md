@@ -265,7 +265,15 @@ the binary.
 
 ### Pinning
 Opted for a file - in _etc/apt/preferences.d/_ - that contains entries for the (currently) two packages that need to be pinned:
-[kubernetes.pref](https://github.com/selste/odroid-cluster/blob/master/ubuntu/etc/apt/preferences.d/kubernetes.pref)
+```
+Package: docker-ce
+Pin: version 17.03.2~ce-0~ubuntu-xenial
+Pin-Priority: 1000
+
+Package: kubelet
+Pin: version 1.10.2-00
+Pin-Priority: 1000
+```
 
 ### Node(s)
 
