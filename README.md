@@ -123,7 +123,7 @@ You'll want to use static IP addresses ...
 ### Kubernetes
 
 #### Docker
-Using the official Docker repository this time, i'm simply following [Get Docker CE for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/) to install _17.03.2\~ce-0\~ubuntu-xenial_.
+Using the official Docker repository this time, i'm simply following [Get Docker CE for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/) to install _17.03.2\~ce-0\~ubuntu-xenial_: `apt-get install docker-ce=17.03.2~ce-0~ubuntu-xenial`
 
 Successfully verified that Docker is installed correctly:
 
@@ -262,3 +262,10 @@ To get rid of the warning regarding _cri-tools_:
 * change ownership (`chown root:root crictl`) and move (`mv crictl /usr/local/bin`)
 
 the binary.
+
+### Pinning
+Opted for a file - in _etc/apt/preferences.d/_ - that contains entries for the (currently) two packages that need to be pinned:
+[kubernetes.pref](https://github.com/selste/odroid-cluster/blob/master/ubuntu/etc/apt/preferences.d/kubernetes.pref)
+
+### Node(s)
+
