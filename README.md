@@ -15,6 +15,8 @@ But the [Odroid-MC1](http://www.hardkernel.com/main/products/prdt_info.php?g_cod
 
 ## Software
 Hardkernel provide images based on Ubuntu running Kernel 4.14 ... which is pretty nice.
+Download it via the [ODROID Wiki](https://wiki.odroid.com/start), the latest Ubuntu 16.04 LTS image is located [there](https://wiki.odroid.com/odroid-xu4/os_images/linux/ubuntu_4.14/20171213) - there is only a minimal image.
+
 Still, i opted for [Armbian](https://www.armbian.com/) - they provide a number of images:
 * Armbian Jessie (Kernel 4.9)
 * Armbian Stretch (Kernel 4.9)
@@ -24,4 +26,4 @@ These images are considered 'Stable', additionally two 'Testing' images are avai
 * Armbian Stretch (Kernel 4.14)
 * Armbian Bionic (Kernel 4.14)
 
-
+Details on the installation are ![here](https://github.com/selste/odroid-cluster/blob/master/Installation.md).
