@@ -26,4 +26,4 @@ These images are considered 'Stable', additionally two 'Testing' images are avai
 * Armbian Stretch (Kernel 4.14)
 * Armbian Bionic (Kernel 4.14)
 
-Details on the installation are ![here](https://github.com/selste/odroid-cluster/blob/master/Installation.md).
+Details on the installation are [here](https://github.com/selste/odroid-cluster/blob/master/Installation.md).
